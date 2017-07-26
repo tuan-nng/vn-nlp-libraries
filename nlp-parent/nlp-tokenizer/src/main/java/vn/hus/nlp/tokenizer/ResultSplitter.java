@@ -81,7 +81,7 @@ public class ResultSplitter {
 				// it is sure that postion > 0
 				String suffix = token.getText().substring(position);
 				TaggedWord[] result = new TaggedWord[2];
-				result[0] = new TaggedWord(new LexerRule("word"), syllables[0]);
+				result[0] = new TaggedWord(new LexerRule("name:prefix"), syllables[0]);
 				result[1] = new TaggedWord(new LexerRule("name"), suffix.trim());
 				return result;
 			}

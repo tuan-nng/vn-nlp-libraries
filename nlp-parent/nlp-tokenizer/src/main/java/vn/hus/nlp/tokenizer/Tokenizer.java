@@ -224,6 +224,7 @@ public class Tokenizer  {
 //				System.out.println("taggedWord phrase = " + taggedWord);
 				String phrase = taggedWord.getText().trim();
 				if (!isSimplePhrase(phrase)) {
+					String ruleName = taggedWord.getRule().getName();
 					String[] tokens = null;
 					// segment the phrase
 					List<String[]> segmentations = segmenter.segment(phrase);
@@ -248,7 +249,7 @@ public class Tokenizer  {
 					// build tokens of the segmentation
 					for (int j = 0; j < tokens.length; j++) {
 						WordToken token = new WordToken(
-								new LexerRule("word"), tokens[j], lineReader.getLineNumber(), column);
+								new LexerRule(ruleName), tokens[j], lineReader.getLineNumber(), column);
 						result.add(token);
 						column += tokens[j].length();
 					}
