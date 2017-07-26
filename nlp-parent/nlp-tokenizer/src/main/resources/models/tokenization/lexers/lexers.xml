@@ -2,7 +2,7 @@
 <!--  (C) phuonglh@gmail.com -->
 <corpus id="resources/lexers/lexers.xml">
     <body>
-        <w msd="alpha">[\p{L}\s]+(?=[\s\.,\!\?\-\:;"“”'\(\)]+|$)(?&lt;!(http|https|ftp))</w>
+        <w msd="phrase">[\p{L}\s]+(?=[\s\.,\!\?\-\:;"“”'\(\)]+|$)(?&lt;!(http|https|ftp))</w>
         <w msd="allcaps">([\p{Lu}]+)([\p{Lu}\.])*[^\p{Ll}\)\W]</w>
         <!--<w msd="name">([\p{Lu}][\p{L}]+)([\s+\-][\p{Lu}][\p{L}]+)*</w>-->
         <w msd="email">(\w[\-\._\w]*\w@\w[\-\._\w]*\w\.\w{2,3})</w>
