@@ -82,17 +82,17 @@ public class Tokenizer  {
 	 * Are ambiguities resolved? True by default.
 	 */
 	private boolean isAmbiguitiesResolved = true;
-	
+
 	private Logger logger;
-	
+
 	private final ResultMerger resultMerger;
 
 	private final ResultSplitter resultSplitter;
-	
-	
+
+
 	/**
 	 * Creates a tokenizer from a lexers filename and a segmenter.
-	 * @param lexersFilename the file that contains lexer rules 
+	 * @param lexersFilename the file that contains lexer rules
 	 * @param segmenter a lexical segmenter<ol></ol>
 	 */
 	public Tokenizer(String lexersFilename, Segmenter segmenter) {
@@ -108,14 +108,14 @@ public class Tokenizer  {
 		resultSplitter = new ResultSplitter();
 		// create logger
 		createLogger();
-		// add a simple tokenizer listener for reporting 
+		// add a simple tokenizer listener for reporting
 		// tokenization progress
 		addTokenizerListener(new SimpleProgressReporter());
 	}
-	
+
 	/**
-	 * Creates a tokenizer from a properties object and a segmenter. This is 
-	 * the prefered way to create a tokenizer. 
+	 * Creates a tokenizer from a properties object and a segmenter. This is
+	 * the prefered way to create a tokenizer.
 	 * @param properties
 	 * @param segmenter
 	 */
@@ -132,11 +132,11 @@ public class Tokenizer  {
 		resultSplitter = new ResultSplitter(properties);
 		// create logger
 		createLogger();
-		// add a simple tokenizer listener for reporting 
+		// add a simple tokenizer listener for reporting
 		// tokenization progress
 		addTokenizerListener(new SimpleProgressReporter());
 	}
-	
+
 	private void createOutputer() {
 		if (outputer == null) {
 			outputer = new Outputer();
@@ -149,15 +149,15 @@ public class Tokenizer  {
 	public Outputer getOutputer() {
 		return outputer;
 	}
-	
+
 	/**
 	 * @param outputer The outputer to set.
 	 */
 	public void setOutputer(Outputer outputer) {
 		this.outputer = outputer;
 	}
-	
-	
+
+
 	private void createLogger() {
 		if (logger == null) {
 			logger = Logger.getLogger(Segmenter.class.getName());
@@ -177,7 +177,7 @@ public class Tokenizer  {
 	/**
 	 * Load lexer specification file. This text file contains lexical rules to
 	 * tokenize a text
-	 * 
+	 *
 	 * @param lexersFilename
 	 *            specification file
 	 */
@@ -199,7 +199,7 @@ public class Tokenizer  {
 	 * Tokenize a reader. If ambiguities are not resolved, this method
 	 * selects the first segmentation for a phrase if there are more than one
 	 * segmentations. Otherwise, it selects automatically the most
-	 * probable segmentation returned by the ambiguity resolver. 
+	 * probable segmentation returned by the ambiguity resolver.
 	 */
 	public void tokenize(Reader reader) throws IOException {
 		// Firstly, the result list is emptied
@@ -240,12 +240,12 @@ public class Tokenizer  {
 						Iterator<String[]> it = segmentations.iterator();
 						if (it.hasNext()) {
 							tokens = it.next();
-						} 
+						}
 					}
 					if (tokens == null) {
 						logger.log(Level.WARNING, "Problem: " + phrase);
 					}
-					
+
 					// build tokens of the segmentation
 					for (int j = 0; j < tokens.length; j++) {
 						WordToken token = new WordToken(
@@ -290,7 +290,7 @@ public class Tokenizer  {
 
 	/**
 	 * Tokenize a file.
-	 * 
+	 *
 	 * @param filename
 	 *            a filename
 	 */
@@ -304,7 +304,7 @@ public class Tokenizer  {
 		}
 		UTF8FileUtility.closeReader();
 	}
-	
+
 	/**
 	 * A phrase is simple if it contains only one syllable.
 	 * @param phrase
@@ -319,7 +319,7 @@ public class Tokenizer  {
 
 	/**
 	 * Return the next token from the input. This old version is deprecated.
-	 * 
+	 *
 	 * @return next token from the input
 	 * @throws IOException
 	 * @see {@link #getNextToken()}
@@ -355,24 +355,23 @@ public class Tokenizer  {
 			LexerRule rule = rules[i];
 			// get the precompiled pattern for this rule
 			Pattern pattern = rule.getPattern();
-			// create a matcher to perform match operations on the string 
+			// create a matcher to perform match operations on the string
 			// by interpreting the pattern
 			Matcher matcher = pattern.matcher(line);
 			// if there is a match, calculate its length
 			// and compare it with the longest match len
 			// Here, we attempts to match the input string, starting at the beginning, against the pattern.
-			// The method lookingAt() always starts at the beginning of the region; 
-			// unlike that method, it does not require that the entire region be matched. 
-			// This method returns true if, and only if, a prefix of the input sequence matches 
+			// The method lookingAt() always starts at the beginning of the region;
+			// unlike that method, it does not require that the entire region be matched.
+			// This method returns true if, and only if, a prefix of the input sequence matches
 			// this matcher's pattern
-			// Problem: if the string is "abc xyz@gmail.com", the next word will be "abc xyz", 
+			// Problem: if the string is "abc xyz@gmail.com", the next word will be "abc xyz",
 			// which is a wrong segmentation! Need a less greedy method to overcome this shortcomming.
 			if (matcher.lookingAt()) {
 				int matchLen = matcher.end();
 				if (matchLen > longestMatchLen) {
 					longestMatchLen = matchLen;
 					text = matcher.group(0);
-					System.err.println(rule.getName() + ": " + text);
 					int lineNumber = lineReader.getLineNumber();
 					token = new TaggedWord(rule, text, lineNumber, column);
 					tokenEnd = matchLen;
@@ -398,7 +397,7 @@ public class Tokenizer  {
 	/**
 	 * Return the next token from the input. Version 2, less greedy
 	 * method than version 1.
-	 * 
+	 *
 	 * @return next token from the input
 	 * @throws IOException
 	 */
@@ -428,16 +427,16 @@ public class Tokenizer  {
 		// input
 		int longestMatchLen = -1;
 		int lineNumber = lineReader.getLineNumber();
-		LexerRule selectedRule = null;   
+		LexerRule selectedRule = null;
 		// find the rule that matches the longest substring of the input
 		for (int i = 0; i < rules.length; i++) {
 			LexerRule rule = rules[i];
 			// get the precompiled pattern for this rule
 			Pattern pattern = rule.getPattern();
-			// create a matcher to perform match operations on the string 
+			// create a matcher to perform match operations on the string
 			// by interpreting the pattern
 			Matcher matcher = pattern.matcher(line);
-			// find the longest match from the start 
+			// find the longest match from the start
 			if (matcher.lookingAt()) {
 				int matchLen = matcher.end();
 				if (matchLen > longestMatchLen) {
@@ -447,8 +446,8 @@ public class Tokenizer  {
 				}
 			}
 		}
-		// 
-		// check if this relates to an email address (to fix an error with email) 
+		//
+		// check if this relates to an email address (to fix an error with email)
 		// yes, I know that this "manual" method must be improved by a more general way.
 		// But at least, it can fix an error with email addresses at the moment. :-)
 		int endIndex = tokenEnd;
@@ -463,7 +462,7 @@ public class Tokenizer  {
 		if (endIndex == 0) {
 			endIndex = tokenEnd;
 		}
-		
+
 		if (selectedRule == null) {
 			selectedRule = new LexerRule("word");
 		}
@@ -476,11 +475,11 @@ public class Tokenizer  {
 //		System.out.println(line);
 		return token;
 	}
-	
+
 	/**
 	 * Export the result of tokenization to a text file, the output
 	 * format is determined by an outputer
-	 * 
+	 *
 	 * @param filename a file to export the result to
 	 * @param outputer an outputer
 	 * @see vn.hus.nlp.tokenizer.io.IOutputFormatter
@@ -515,7 +514,7 @@ public class Tokenizer  {
 		UTF8FileUtility.closeWriter();
 		System.out.println("OK");
 	}
-	
+
 	/**
 	 * @return Returns the a result of tokenization.
 	 */
@@ -532,7 +531,7 @@ public class Tokenizer  {
 	}
 
 
-	
+
 	/**
 	 * Adds a listener
 	 * @param listener a listener to add
@@ -554,7 +553,7 @@ public class Tokenizer  {
 	public List<ITokenizerListener> getTokenizerListener() {
 		return tokenizerListener;
 	}
-	
+
 	/**
 	 * Reports process of the tokenization to all listener
 	 * @param token the processed token
@@ -564,7 +563,7 @@ public class Tokenizer  {
 			listener.processToken(token);
 		}
 	}
-	
+
 	/**
 	 * Dispose the tokenizer
 	 *
@@ -577,10 +576,10 @@ public class Tokenizer  {
 		// remove all tokenizer listeners
 		tokenizerListener.clear();
 	}
-	
+
 	/**
 	 * Return <code>true</code> if the ambiguities are resolved by
-	 * a resolver. The default value is <code>false</code>. 
+	 * a resolver. The default value is <code>false</code>.
 	 * @return
 	 */
 	public boolean isAmbiguitiesResolved() {
@@ -593,7 +592,7 @@ public class Tokenizer  {
 	public void setAmbiguitiesResolved(boolean b) {
 		isAmbiguitiesResolved = b;
 	}
-	
+
 	/**
 	 * Return the lexical segmenter
 	 * @return
@@ -618,6 +617,6 @@ public class Tokenizer  {
 				System.out.print(".");
 			}
 		}
-		
+
 	}
 }
