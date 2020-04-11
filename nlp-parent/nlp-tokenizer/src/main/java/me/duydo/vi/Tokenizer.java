@@ -68,10 +68,12 @@ public class Tokenizer {
         String line = null;
         int column = 1;
         while (true) {
-            if (line == null || line.trim().length() == 0) {
+            if (line == null || line.trim().isEmpty()) {
                 line = reader.readLine();
                 if (line == null) {
                     break;
+                } else if (line.trim().isEmpty()) {
+                    continue;
                 }
             }
             TaggedWord taggedWord = null;
@@ -101,7 +103,7 @@ public class Tokenizer {
             // yes, I know that this "manual" method must be improved by a more general way.
             // But at least, it can fix an error with email addresses at the moment. :-)
             int endIndex = tokenEnd;
-            if (tokenEnd < line.length()) {
+            if (tokenEnd >= 0 && tokenEnd < line.length()) {
                 if (line.charAt(tokenEnd) == '@') {
                     while (endIndex > 0 && line.charAt(endIndex) != ' ') {
                         endIndex--;
