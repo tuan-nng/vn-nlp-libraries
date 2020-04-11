@@ -24,8 +24,6 @@ import java.util.regex.Pattern;
 
 public class Tokenizer {
 
-    private Segmenter segmenter;
-
     private boolean isAmbiguitiesResolved = true;
 
     private ResultMerger resultMerger;
@@ -33,6 +31,8 @@ public class Tokenizer {
     private ResultSplitter resultSplitter;
 
     private final List<LexerRule> rules = new ArrayList<>();
+    private Properties properties;
+    private UnigramResolver unigramModel;
 
     public Tokenizer() {
         init();
@@ -40,12 +40,12 @@ public class Tokenizer {
 
     private void init() {
         try {
-            final Properties properties = new Properties();
+            properties = new Properties();
             properties.load(getClass().getResourceAsStream("/tokenizer.properties"));
             loadLexerRules(properties.getProperty("lexers"));
             resultMerger = new ResultMerger();
             resultSplitter = new ResultSplitter(properties);
-            segmenter = new Segmenter(properties, new UnigramResolver(properties.getProperty("unigramModel")));
+            unigramModel = new UnigramResolver(properties.getProperty("unigramModel"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -63,6 +63,7 @@ public class Tokenizer {
     }
 
     public List<TaggedWord> tokenize(Reader input) throws IOException {
+        Segmenter segmenter = new Segmenter(properties, unigramModel);
         final List<TaggedWord> result = new ArrayList<>();
         final LineNumberReader reader = new LineNumberReader(input);
         String line = null;
